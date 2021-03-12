@@ -9,7 +9,9 @@
 #pragma once
 #include <SDL.h>
 #include "SDL_TTF.h"
-
+#include <string>
+#include <cstring>
+using namespace std;
 
 
 
@@ -68,4 +70,10 @@ private:
 	TTF_Font* font;
 	SDL_Texture* text;
 	SDL_Rect textRect;
+	SDL_Color color = { 0,0,0 };
+	SDL_Surface* text_surface;
+
+	char* scoreStr;
+
+
 };

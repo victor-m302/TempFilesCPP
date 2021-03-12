@@ -17,39 +17,7 @@ const float paddleH = 80.0f;  // tamanho da raquete
 
 void Game::Text(SDL_Renderer* renderer) {
 
-    TTF_Init();
-    // load font.ttf at size 16 into font
-    font = TTF_OpenFont("Vogue.ttf", 16);
-    if (!font) {
-        printf("TTF_OpenFont: %s\n", TTF_GetError());
-        // handle error
-    }
-    printf("TTF_1\n");
-    /////////////
-
-
-// Render some UTF8 text in solid black to a new surface
-// then blit to the upper left of the screen
-// then free the text surface
-    SDL_Color color = { 0,0,0 };
-    SDL_Surface* text_surface;
-    printf("TTF_2\n");
-    text_surface = TTF_RenderUTF8_Solid(font, "Hello World!", color);
-    text = SDL_CreateTextureFromSurface(mRenderer, text_surface);
-    printf("TTF_3\n");
-    textRect.x = 100;
-    textRect.y = 100;
-    SDL_QueryTexture(text, NULL, NULL, &textRect.w, &textRect.h);
-    printf("TTF_4\n");
-    SDL_FreeSurface(text_surface);
-    // free the font
-    TTF_CloseFont(font);
-    printf("TTF_5\n");
-    font = NULL; // to be safe...
-
-
-
-    TTF_Quit();
+    
 }
 
 
@@ -111,6 +79,38 @@ bool Game::Initialize() {
     mBallPos2.y = 768.0f / 2.0f;  // posição da bola eixo y
     mBallVel2.x = -100.0f;  // velocidade de movimentação da bola no eixo x
     mBallVel2.y = 300.0f;  // velocidade de movimentação da bola no eixo y
+
+    /*              */
+
+
+
+    TTF_Init();
+    // load font.ttf at size 16 into font
+    font = TTF_OpenFont("Vogue.ttf", 16);
+    if (!font) {
+        printf("TTF_OpenFont: %s\n", TTF_GetError());
+        // handle error
+    }
+    string str_obj("GeeksForGeeks"); //input text
+    scoreStr = &str_obj[0]; //define scoreStr
+
+    printf("TTF_1\n");
+    text_surface = TTF_RenderUTF8_Solid(font, scoreStr, color);
+    text = SDL_CreateTextureFromSurface(mRenderer, text_surface);
+    textRect.x = 100;
+    textRect.y = 100;
+    SDL_QueryTexture(text, NULL, NULL, &textRect.w, &textRect.h);
+    SDL_FreeSurface(text_surface);
+    // free the font
+    TTF_CloseFont(font);
+    font = NULL; // to be safe...
+    TTF_Quit();
+
+
+    /**/
+
+
+
 
 
     
@@ -195,11 +195,6 @@ void Game::UpdateGame() {
     mBallPos.y += mBallVel.y * deltaTime;
 
 
-    //atualiza texto
-
-    SDL_RenderCopy(mRenderer, text, NULL, &textRect);
-
-
     // atualiza a posição da bola se ela colidiu com a raquete
     float diff = mPaddlePos.y - mBallPos.y;
     // pegue o valor absoluto de diferença entre o eixo y da bolinha e da raquete
@@ -221,7 +216,7 @@ void Game::UpdateGame() {
     // Se sim, encerra o jogo
     else if (mBallPos.x <= 0.0f) {
         //mIsRunning = false;
-        Text(mRenderer);
+        
         mBallPos.x = (float)1024 / 2;
         mBallPos.y = (float)768 / 2;
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING,
@@ -302,6 +297,9 @@ void Game::UpdateGame() {
     else if (mBallPos2.y >= (768 - thickness) && mBallVel2.y > 0.0f) {
         mBallVel2.y *= -1;
     }
+
+
+
 }
 
 // Desenhando a tela do jogo
@@ -313,6 +311,9 @@ void Game::GenerateOutput() {
 
     // limpa o back buffer
     SDL_RenderClear(mRenderer);
+
+    //atualiza texto
+    SDL_RenderCopy(mRenderer, text, NULL, &textRect);
 
     // Desenha as paredes - mudamos a cor de mRenderer para o desenho dos
     // retangulos que formaram as paredes
@@ -410,5 +411,6 @@ void Game::GenerateOutput() {
 void Game::Shutdown() {
     SDL_DestroyRenderer(mRenderer);  // encerra o renderizador
     SDL_DestroyWindow(mWindow);  // encerra a janela aberta
+    SDL_DestroyTexture(text);
     SDL_Quit();  // encerra o jogo
 }
